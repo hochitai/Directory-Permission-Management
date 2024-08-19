@@ -35,5 +35,6 @@ namespace DirectoryPermissionManagement.Repositories
         {
             return _context.Users.SingleOrDefault(u => u.Username == username);
         }
+
     }
 }

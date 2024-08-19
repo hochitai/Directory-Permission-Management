@@ -8,6 +8,7 @@ using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Models;
 using DirectoryPermissionManagement.Repositories;
 using DirectoryPermissionManagement.Services;
+using Microsoft.OpenApi.Models;
 
 namespace DirectoryPermissionManagement
 {
@@ -21,13 +22,23 @@ namespace DirectoryPermissionManagement
 
             builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseInMemoryDatabase("DirectoryPermissionDb"));
 
-
             // Register User Service
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<UserRepository>();
 
-
             builder.Services.AddControllers();
+
+            builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddSwaggerGen(option => {
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { In = ParameterLocation.Header, Description = "Please enter a valid token", Name = "Authorization", Type = SecuritySchemeType.Http, BearerFormat = "JWT", Scheme = "Bearer" });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+                        new string[] { }
+                    }
+                });
+            });
 
             //JWT Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
@@ -49,14 +60,23 @@ namespace DirectoryPermissionManagement
             //add it to services
             builder.Services.AddSingleton(jwtConfig);
 
+            builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
+            // Configure the HTTP request pipeline.
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

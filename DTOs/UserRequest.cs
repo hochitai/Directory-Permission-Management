@@ -1,5 +1,8 @@
-﻿namespace DirectoryPermissionManagement.DTOs
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace DirectoryPermissionManagement.DTOs
 {
+    [Keyless]
     public class UserRequest
     {
         public string? Name { get; set; }

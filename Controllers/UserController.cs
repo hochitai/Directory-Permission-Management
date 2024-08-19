@@ -36,7 +36,7 @@ namespace DirectoryPermissionManagement.Controllers
             
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public JsonResult Login(UserRequest userRequest)
         {
 
