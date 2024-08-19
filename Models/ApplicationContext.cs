@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DirectoryPermissionManagement.Models;
 
-namespace DirectoryPermissionManagement.Data
+namespace DirectoryPermissionManagement.Models
 {
     public class ApplicationContext : DbContext
     {
@@ -11,6 +10,6 @@ namespace DirectoryPermissionManagement.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<Folder> Folders { get; set; }
         public DbSet<Drive> Drives { get; set; }
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     }
 }

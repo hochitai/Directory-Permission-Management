@@ -1,4 +1,6 @@
-﻿namespace DirectoryPermissionManagement.DTOs
+﻿using DirectoryPermissionManagement.Models;
+
+namespace DirectoryPermissionManagement.DTOs
 {
     public class UserResponse
     {
@@ -7,6 +9,12 @@
             Id = id;
             Name = name;
             Token = token;
+        }
+
+        public UserResponse(User user)
+        {
+            Id = user.Id;
+            Name = user.Name;
         }
 
         public int Id { get; set; }

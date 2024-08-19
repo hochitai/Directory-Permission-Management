@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using DirectoryPermissionManagement.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using DirectoryPermissionManagement.Configs;
+using DirectoryPermissionManagement.Models;
+using DirectoryPermissionManagement.Repositories;
+using DirectoryPermissionManagement.Services;
 
 namespace DirectoryPermissionManagement
 {
@@ -18,6 +20,12 @@ namespace DirectoryPermissionManagement
             // Add services to the container.
 
             builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseInMemoryDatabase("DirectoryPermissionDb"));
+
+
+            // Register User Service
+            builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<UserRepository>();
+
 
             builder.Services.AddControllers();
 
