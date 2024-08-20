@@ -13,12 +13,12 @@ namespace DirectoryPermissionManagement.Repositories
 
         public Drive? GetById(int id)
         {
-            return _context.Drives.FirstOrDefault(x => x.Id == id);
+            return _context.Drives.Find(id);
         }
 
         public List<Drive>? GetByUserId(int userId)
         {
-            return _context.Drives.Where(x => x.UserId == userId).ToList();
+            return _context.Drives.Where(d => d.UserId == userId).ToList();
         }
 
         public Drive Insert(Drive drive)
@@ -44,7 +44,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public bool HadNameAndUserId(string name, int userId)
         {
-            var driveInDb = _context.Drives.SingleOrDefault(u => u.Name == name && u.UserId == userId);
+            var driveInDb = _context.Drives.SingleOrDefault(d => d.Name == name && d.UserId == userId);
             return driveInDb != null;
         }
 

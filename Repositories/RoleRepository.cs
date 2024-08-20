@@ -13,7 +13,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public Role? GetById(int id)
         {
-            return _context.Roles.FirstOrDefault(x => x.Id == id);
+            return _context.Roles.Find(id);
         }
 
         public Role Insert(Role role)
