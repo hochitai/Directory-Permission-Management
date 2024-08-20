@@ -28,7 +28,7 @@ namespace DirectoryPermissionManagement.Services
 
         public Drive? Insert(Drive drive)
         {
-            if (_driveRepository.IsExisted(drive))
+            if (_driveRepository.HadNameAndUserId(drive.Name, drive.UserId))
             {
                 return null;
             }

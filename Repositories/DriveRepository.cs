@@ -30,6 +30,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public Drive Update(Drive drive)
         {
+            _context.ChangeTracker.Clear();
             _context.Drives.Update(drive);
             _context.SaveChanges();
             return drive;
@@ -41,9 +42,9 @@ namespace DirectoryPermissionManagement.Repositories
             _context.SaveChanges();
         }
 
-        public bool IsExisted(Drive drive)
+        public bool HadNameAndUserId(string name, int userId)
         {
-            var driveInDb = _context.Drives.SingleOrDefault(u => u.Name == drive.Name && u.UserId == drive.UserId);
+            var driveInDb = _context.Drives.SingleOrDefault(u => u.Name == name && u.UserId == userId);
             return driveInDb != null;
         }
 
