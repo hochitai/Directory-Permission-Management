@@ -9,6 +9,7 @@ using DirectoryPermissionManagement.Models;
 using DirectoryPermissionManagement.Repositories;
 using DirectoryPermissionManagement.Services;
 using Microsoft.OpenApi.Models;
+using Microsoft.Win32;
 
 namespace DirectoryPermissionManagement
 {
@@ -25,6 +26,10 @@ namespace DirectoryPermissionManagement
             // Register User Service
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<UserRepository>();
+
+            // Register Drive Service
+            builder.Services.AddScoped<DriveService>();
+            builder.Services.AddScoped<DriveRepository>();
 
             builder.Services.AddControllers();
 
