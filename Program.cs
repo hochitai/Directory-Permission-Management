@@ -43,6 +43,10 @@ namespace DirectoryPermissionManagement
             builder.Services.AddScoped<ItemService>();
             builder.Services.AddScoped<ItemRepository>();
 
+            // Register Permission Service
+            builder.Services.AddScoped<PermissionService>();
+            builder.Services.AddScoped<PermissionRepository>();
+
 
             builder.Services.AddControllers();
 

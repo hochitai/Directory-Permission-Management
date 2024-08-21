@@ -25,7 +25,7 @@ namespace DirectoryPermissionManagement.Controllers
         [HttpPost]
         public JsonResult Register(UserRequest userRequest)
         {
-            var result = _userService.AddUser(userRequest);
+            var result = _userService.CreateUser(userRequest);
 
             if (result == null)
             {

@@ -26,31 +26,40 @@ namespace DirectoryPermissionManagement.Services
             return result;
         }
 
-        public Drive? Insert(Drive drive)
+        public Drive? Insert(Drive drive, int userId)
         {
-            if (_driveRepository.HadNameAndUserId(drive.Name, drive.UserId))
+            if (_driveRepository.HadNameAndUserId(drive.Name, userId))
             {
                 return null;
             }
+            drive.UserId = userId;
+
             var result = _driveRepository.Insert(drive);
             return result;
         }
 
-        public Drive? Update(int id, Drive drive)
+        public Drive? Update(int id, Drive drive, int userId)
         {
             if (!_driveRepository.IsExisted(id))
             {
                 return null;
             }
+            
             drive.Id = id;
+            drive.UserId = userId;
+
             var result = _driveRepository.Update(drive);
             return result;
         }
 
-        public void Delete(int id)
+        public void Delete(int id, int userId)
         {
             var result = _driveRepository.GetById(id);
             if (result == null)
+            {
+                return;
+            }
+            if (result.UserId != userId)
             {
                 return;
             }

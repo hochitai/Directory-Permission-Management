@@ -9,6 +9,7 @@ using DirectoryPermissionManagement.Helpers;
 using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -24,8 +25,18 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public JsonResult GetById(int id)
         {
+            // Get user login
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var tokenHelper = new TokenHelper();
+            var userId = tokenHelper.GetUserIdFromToken(identity);
+            if (userId == 0)
+            {
+                return new JsonResult(BadRequest("Please login again!"));
+            }
+
             var result = _folderService.GetById(id);
 
             if (result == null)

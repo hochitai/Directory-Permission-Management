@@ -18,7 +18,7 @@ namespace DirectoryPermissionManagement.Services
             _jwtConfig = jwtConfig;
         }
 
-        public UserResponse? AddUser(UserRequest userRequest)
+        public UserResponse? CreateUser(UserRequest userRequest)
         {
             if (_userRepository.IsExisted(userRequest.Username))
             {
@@ -28,12 +28,14 @@ namespace DirectoryPermissionManagement.Services
             StringHelper stringHelper = new StringHelper();
             byte[] salt = stringHelper.CreateSalt();
 
-            User user = new User();
-            user.Username = userRequest.Username;
-            user.Password = stringHelper.HashPassword(userRequest.Password, salt);
-            user.Name = userRequest.Name;
-            user.IsActived = true;
-            user.Salt = Convert.ToBase64String(salt);
+            User user = new User()
+            {
+                Username = userRequest.Username,
+                Password = stringHelper.HashPassword(userRequest.Password, salt),
+                Name = userRequest.Name,
+                IsActived = true,
+                Salt = Convert.ToBase64String(salt),
+            };
 
             user = _userRepository.Add(user);
 
@@ -61,7 +63,11 @@ namespace DirectoryPermissionManagement.Services
                 return null;
             }
 
-            var result = new UserResponse(userInDb.Id, userInDb.Name, "");
+            var result = new UserResponse()
+            {
+                Id = userInDb.Id, 
+                Name = userInDb.Name,
+            };
 
             TokenHelper tokenHelper = new TokenHelper();
             var token = tokenHelper.GenerateToken(result, _jwtConfig);

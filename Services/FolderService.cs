@@ -8,10 +8,12 @@ namespace DirectoryPermissionManagement.Services
     public class FolderService
     {
         private readonly FolderRepository _folderRepository;
+        private readonly PermissionRepository _permissionRepository;
 
-        public FolderService(FolderRepository folderRepository)
+        public FolderService(FolderRepository folderRepository, PermissionRepository permissionRepository)
         {
             _folderRepository = folderRepository;
+            _permissionRepository = permissionRepository;
         }
 
         public Folder? GetById(int id)
@@ -27,6 +29,7 @@ namespace DirectoryPermissionManagement.Services
                 return null;
             }
             var result = _folderRepository.Insert(folder);
+
             return result;
         }
 

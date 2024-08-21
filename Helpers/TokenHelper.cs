@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System;
 using System.Configuration;
 using DirectoryPermissionManagement.Configs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DirectoryPermissionManagement.Helpers
 {
@@ -23,13 +24,25 @@ namespace DirectoryPermissionManagement.Helpers
                 new Claim("id", userResponse.Id.ToString())
             };
             var token = new JwtSecurityToken(config.Issuer,
-                config.Atudience,
+                config.Audience,
                 claims,
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
 
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public int GetUserIdFromToken(ClaimsIdentity identity)
+        {
+            if (identity == null)
+            {
+                return 0;
+            }
+
+            var userClaims = identity.Claims;
+            var userId = Int32.Parse(userClaims.FirstOrDefault(x => x.Type == "id")?.Value);
+            return userId;
         }
 
     }

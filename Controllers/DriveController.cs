@@ -9,6 +9,8 @@ using DirectoryPermissionManagement.Helpers;
 using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
+using DirectoryPermissionManagement.Filters;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -24,6 +26,7 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpGet("{id}")]
+        [CustomAuthorize]
         public JsonResult GetById(int id)
         {
             var result = _driveService.GetById(id);
@@ -37,9 +40,13 @@ namespace DirectoryPermissionManagement.Controllers
             
         }
 
-        [HttpGet("user/{userId}")]
-        public JsonResult GetByUserId(int userId)
+        [HttpGet("user")]
+        [CustomAuthorize]
+        public JsonResult GetByUserId()
         {
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
             var result = _driveService.GetByUserId(userId);
 
             if (result == null)
@@ -52,9 +59,13 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize]
         public JsonResult CreateDrive(Drive drive)
         {
-            var result = _driveService.Insert(drive);
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            var result = _driveService.Insert(drive, userId);
 
             if (result == null)
             {
@@ -62,13 +73,16 @@ namespace DirectoryPermissionManagement.Controllers
             }
 
             return new JsonResult(Created("", result));
-
         }
 
         [HttpPut("{id}")]
+        [CustomAuthorize]
         public JsonResult UpdateDrive(int id, Drive drive)
         {
-            var result = _driveService.Update(id, drive);
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            var result = _driveService.Update(id, drive, userId);
 
             if (result == null)
             {
@@ -80,9 +94,13 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CustomAuthorize]
         public JsonResult DeleteDrive(int id)
         {
-            _driveService.Delete(id);
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            _driveService.Delete(id, userId);
             return new JsonResult(NoContent());
 
         }
