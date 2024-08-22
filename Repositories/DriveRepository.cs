@@ -11,9 +11,9 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public Drive? GetById(int id, int userId)
+        public Drive? GetById(int id)
         {
-            return _context.Drives.SingleOrDefault(d => d.Id == id && d.UserId == userId);
+            return _context.Drives.SingleOrDefault(d => d.Id == id);
         }
 
         public List<Drive>? GetByUserId(int userId)

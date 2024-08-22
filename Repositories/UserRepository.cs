@@ -1,5 +1,6 @@
 ﻿using DirectoryPermissionManagement.DTOs;
 using DirectoryPermissionManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -12,28 +13,21 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public User Add(User user)
+        public async Task<User> Add(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
-        public User Login(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return user;
-        }
-
-        public bool IsExisted(string username) {
-            var userInDb = _context.Users.SingleOrDefault(u => u.Username == username);
+        public async Task<bool> IsExisted(string username) {
+            var userInDb = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
             return userInDb != null;
         }
 
-        public User? GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsername(string username)
         {
-            return _context.Users.SingleOrDefault(u => u.Username == username);
+            return await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
         }
 
     }

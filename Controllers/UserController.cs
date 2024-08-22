@@ -23,21 +23,21 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpPost]
-        public JsonResult Register(UserRequest userRequest)
+        public async Task<IActionResult> Register([FromBody] UserRequest userRequest)
         {
-            var result = _userService.CreateUser(userRequest);
+            var result = await _userService.CreateUser(userRequest);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Username was existed!"));
+                return BadRequest("Username was existed!");
             }
 
-            return new JsonResult(Created("", result));
+            return Created("", result);
             
         }
 
         [HttpPost("login")]
-        public JsonResult Login(UserRequest userRequest)
+        public JsonResult Login([FromBody] UserRequest userRequest)
         {
             var result = _userService.Login(userRequest);
 

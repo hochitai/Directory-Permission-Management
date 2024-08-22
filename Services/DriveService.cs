@@ -14,9 +14,9 @@ namespace DirectoryPermissionManagement.Services
             _driveRepository = driveRepository;
         }
 
-        public Drive? GetById(int id, int userId)
+        public Drive? GetById(int id)
         {
-            var result = _driveRepository.GetById(id, userId);
+            var result = _driveRepository.GetById(id);
             return result;
         }
 

@@ -27,12 +27,12 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpGet("{id}")]
         [CustomAuthorize]
-        public JsonResult GetByIdOfUser(int id)
+        public JsonResult GetById(int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _folderService.GetById(id, userId);
+            var result = _folderService.GetById(id);
 
             if (result == null)
             {

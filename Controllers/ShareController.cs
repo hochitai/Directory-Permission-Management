@@ -14,11 +14,11 @@ namespace DirectoryPermissionManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PermissionController : ControllerBase
+    public class ShareController : ControllerBase
     {
         private readonly PermissionService _permissionService;
 
-        public PermissionController(PermissionService permissionService)
+        public ShareController(PermissionService permissionService)
         {
             _permissionService = permissionService;
         }

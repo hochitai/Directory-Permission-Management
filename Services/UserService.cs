@@ -18,9 +18,9 @@ namespace DirectoryPermissionManagement.Services
             _jwtConfig = jwtConfig;
         }
 
-        public UserResponse? CreateUser(UserRequest userRequest)
+        public async Task<UserResponse?> CreateUser(UserRequest userRequest)
         {
-            if (_userRepository.IsExisted(userRequest.Username))
+            if (await _userRepository.IsExisted(userRequest.Username))
             {
                 return null;
             }
@@ -37,18 +37,18 @@ namespace DirectoryPermissionManagement.Services
                 Salt = Convert.ToBase64String(salt),
             };
 
-            user = _userRepository.Add(user);
+            user = await _userRepository.Add(user);
 
             return new UserResponse(user);
         }
-        public UserResponse? Login(UserRequest userRequest) 
+        public async Task<UserResponse?> Login(UserRequest userRequest) 
         {
-            if (!_userRepository.IsExisted(userRequest.Username))
+            if ( ! await _userRepository.IsExisted(userRequest.Username))
             {
                 return null;
             }
 
-            var userInDb = _userRepository.GetUserByUsername(userRequest.Username);
+            var userInDb = await _userRepository.GetUserByUsername(userRequest.Username);
 
             if (userInDb == null)
             {
