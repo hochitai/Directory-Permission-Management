@@ -8,6 +8,6 @@ namespace DirectoryPermissionManagement.Models
         public int UserId { get; set; }
         public int FolderId { get; set; }
         public int ItemId { get; set; }
-        public int RoleId {  get; set; }
+        public string Role {  get; set; }
     }
 }
