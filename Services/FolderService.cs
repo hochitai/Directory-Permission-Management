@@ -16,7 +16,7 @@ namespace DirectoryPermissionManagement.Services
             _permissionRepository = permissionRepository;
         }
 
-        public Folder? GetById(int id)
+        public Folder? GetByIdOfUser(int id, int userId)
         {
             var result = _folderRepository.GetById(id);
             return result;

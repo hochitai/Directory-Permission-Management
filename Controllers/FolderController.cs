@@ -10,6 +10,7 @@ using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
+using DirectoryPermissionManagement.Filters;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -25,19 +26,13 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
-        public JsonResult GetById(int id)
+        [CustomAuthorize]
+        public JsonResult GetByIdOfUser(int id)
         {
-            // Get user login
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var tokenHelper = new TokenHelper();
-            var userId = tokenHelper.GetUserIdFromToken(identity);
-            if (userId == 0)
-            {
-                return new JsonResult(BadRequest("Please login again!"));
-            }
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
 
-            var result = _folderService.GetById(id);
+            var result = _folderService.GetById(id, userId);
 
             if (result == null)
             {
@@ -49,6 +44,7 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize]
         public JsonResult CreateFolder(Folder folder)
         {
             var result = _folderService.Insert(folder);
@@ -63,6 +59,7 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpPut("{id}")]
+        [CustomAuthorize]
         public JsonResult UpdateFolder(int id, Folder folder)
         {
             var result = _folderService.Update(id, folder);
@@ -77,6 +74,7 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CustomAuthorize]
         public JsonResult DeleteFolder(int id)
         {
             var result = _folderService.Delete(id);

@@ -39,7 +39,6 @@ namespace DirectoryPermissionManagement.Controllers
         [HttpPost("login")]
         public JsonResult Login(UserRequest userRequest)
         {
-
             var result = _userService.Login(userRequest);
 
             if (result == null)
