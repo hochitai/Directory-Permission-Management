@@ -27,7 +27,7 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpGet("{id}/subfolder")]
         [CustomAuthorize]
-        public async Task<IActionResult> GetSubFoldersById(int id)
+        public async Task<IActionResult> GetSubFoldersById([FromRoute] int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
@@ -44,7 +44,7 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpGet("{id}/file")]
         [CustomAuthorize]
-        public async Task<IActionResult> GetFilesById(int id)
+        public async Task<IActionResult> GetFilesById([FromRoute] int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
@@ -61,7 +61,7 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpPost]
         [CustomAuthorize]
-        public async Task<IActionResult> CreateFolder(Folder folder)
+        public async Task<IActionResult> CreateFolder([FromBody] Folder folder)
         {
             var result = await _folderService.Insert(folder);
 
@@ -76,7 +76,7 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpPut("{id}")]
         [CustomAuthorize]
-        public async Task<IActionResult> UpdateFolder(int id, Folder folder)
+        public async Task<IActionResult> UpdateFolder([FromRoute] int id, [FromBody] Folder folder)
         {
             var result = await _folderService.Update(id, folder);
 
@@ -91,7 +91,7 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpDelete("{id}")]
         [CustomAuthorize]
-        public async Task<IActionResult> DeleteFolder(int id)
+        public async Task<IActionResult> DeleteFolder([FromRoute] int id)
         {
             var result = await _folderService.Delete(id);
             if (!result)
