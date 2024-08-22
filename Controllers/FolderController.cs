@@ -25,64 +25,80 @@ namespace DirectoryPermissionManagement.Controllers
             _folderService = folderService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/subfolder")]
         [CustomAuthorize]
-        public JsonResult GetById(int id)
+        public async Task<IActionResult> GetSubFoldersById(int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _folderService.GetById(id);
+            var result = await _folderService.GetSubFoldersById(id, userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Folder was not existed!"));
+                return BadRequest("Folder was not existed!");
             }
 
-            return new JsonResult(Ok(result));
-            
+            return Ok(result);  
+        }
+
+        [HttpGet("{id}/file")]
+        [CustomAuthorize]
+        public async Task<IActionResult> GetFilesById(int id)
+        {
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            var result = await _folderService.GetFilesById(id, userId);
+
+            if (result == null)
+            {
+                return BadRequest("Folder was not existed!");
+            }
+
+            return Ok(result);
         }
 
         [HttpPost]
         [CustomAuthorize]
-        public JsonResult CreateFolder(Folder folder)
+        public async Task<IActionResult> CreateFolder(Folder folder)
         {
-            var result = _folderService.Insert(folder);
+            var result = await _folderService.Insert(folder);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Folder name was existed, please change name!"));
+                return BadRequest("Folder name was existed, please change name!");
             }
 
-            return new JsonResult(Created("", result));
+            return Created("", result);
 
         }
 
         [HttpPut("{id}")]
         [CustomAuthorize]
-        public JsonResult UpdateFolder(int id, Folder folder)
+        public async Task<IActionResult> UpdateFolder(int id, Folder folder)
         {
-            var result = _folderService.Update(id, folder);
+            var result = await _folderService.Update(id, folder);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Update folder fail!"));
+                return BadRequest("Update folder fail!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
 
         }
 
         [HttpDelete("{id}")]
         [CustomAuthorize]
-        public JsonResult DeleteFolder(int id)
+        public async Task<IActionResult> DeleteFolder(int id)
         {
-            var result = _folderService.Delete(id);
+            var result = await _folderService.Delete(id);
             if (!result)
             {
-                return new JsonResult(BadRequest("Delete folder fail!"));
+                return BadRequest("Delete folder fail!");
             }
-            return new JsonResult(NoContent());
+            return NoContent();
 
         }
     }

@@ -1,4 +1,5 @@
 ﻿using DirectoryPermissionManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -11,41 +12,59 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public Folder? GetById(int id)
+        public async Task<Folder?> GetById(int id)
         {
             return _context.Folders.Find(id);
         }
 
-        public Folder Insert(Folder folder)
+        public async Task<List<Folder>?> GetSubFoldersById(int id, int userId)
         {
-            _context.Folders.Add(folder);
-            _context.SaveChanges();
+            var results = from f in _context.Folders
+                          join d in _context.Drives on f.DriveId equals d.Id
+                          where d.UserId == userId && f.ParrentFolderId == id
+                          select f;
+            return await results.ToListAsync();
+        }
+
+        public async Task<List<Item>?> GetFilesById(int id, int userId)
+        {
+            var results = from i in _context.Items
+                          join d in _context.Drives on i.DriveId equals d.Id
+                          where d.UserId == userId && i.FolderId == id
+                          select i;
+            return await results.ToListAsync();
+        }
+
+        public async Task<Folder> Insert(Folder folder)
+        {
+            await _context.Folders.AddAsync(folder);
+            await _context.SaveChangesAsync();
             return folder;
         }
 
-        public Folder Update(Folder folder)
+        public async Task<Folder> Update(Folder folder)
         {
             _context.ChangeTracker.Clear();
             _context.Folders.Update(folder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return folder;
         }
 
-        public void Delete(Folder folder) 
+        public async Task Delete(Folder folder) 
         {
             _context.Folders.Remove(folder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public bool IsExisted(int id)
+        public async Task<bool> IsExisted(int id)
         {
-            var folderInDb = _context.Folders.Find(id);
+            var folderInDb = await _context.Folders.FindAsync(id);
             return folderInDb != null;
         }
 
-        public bool HadNameAndDriveIdAndParrentFolderId(string name, int driveId, int? parrentFolderId)
+        public async Task<bool> HadNameAndDriveIdAndParrentFolderId(string name, int driveId, int? parrentFolderId)
         {
-            var folderInDb = _context.Folders.SingleOrDefault(f => f.Name == name && f.DriveId == driveId && f.ParrentFolderId == parrentFolderId);
+            var folderInDb = await _context.Folders.SingleOrDefaultAsync(f => f.Name == name && f.DriveId == driveId && f.ParrentFolderId == parrentFolderId);
             return folderInDb != null;
         }
 

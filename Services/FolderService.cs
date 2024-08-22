@@ -16,43 +16,49 @@ namespace DirectoryPermissionManagement.Services
             _permissionRepository = permissionRepository;
         }
 
-        public Folder? GetById(int id)
+        public async Task<List<Folder>?> GetSubFoldersById(int id, int userId)
         {
-            var result = _folderRepository.GetById(id);
+            var result = await _folderRepository.GetSubFoldersById(id, userId);
             return result;
         }
 
-        public Folder? Insert(Folder folder)
+        public async Task<List<Item>?> GetFilesById(int id, int userId)
         {
-            if (_folderRepository.HadNameAndDriveIdAndParrentFolderId(folder.Name, folder.DriveId, (int?)folder.ParrentFolderId))
+            var result = await _folderRepository.GetFilesById(id, userId);
+            return result;
+        }
+
+        public async Task<Folder?> Insert(Folder folder)
+        {
+            if (await _folderRepository.HadNameAndDriveIdAndParrentFolderId(folder.Name, folder.DriveId, (int?)folder.ParrentFolderId))
             {
                 return null;
             }
-            var result = _folderRepository.Insert(folder);
+            var result = await _folderRepository.Insert(folder);
 
             return result;
         }
 
-        public Folder? Update(int id, Folder folder)
+        public async Task<Folder?> Update(int id, Folder folder)
         {
-            if (!_folderRepository.IsExisted(id))
+            if (! await _folderRepository.IsExisted(id))
             {
                 return null;
             }
             folder.Id = id;
-            var result = _folderRepository.Update(folder);
+            var result = await _folderRepository.Update(folder);
             return result;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var result = _folderRepository.GetById(id);
+            var result = await _folderRepository.GetById(id);
             if (result == null)
             {
                 return false;
             }
 
-            _folderRepository.Delete(result);
+            await _folderRepository.Delete(result);
             return true;
         }
     }
