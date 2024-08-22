@@ -1,4 +1,5 @@
 ﻿using DirectoryPermissionManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -11,41 +12,41 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public Item? GetById(int id)
+        public async Task<Item?> GetById(int id)
         {
-            return _context.Items.Find(id);
+            return await _context.Items.FindAsync(id);
         }
 
-        public Item Insert(Item item)
+        public async Task<Item> Insert(Item item)
         {
-            _context.Items.Add(item);
-            _context.SaveChanges();
+            await _context.Items.AddAsync(item);
+            await _context.SaveChangesAsync();
             return item;
         }
 
-        public Item Update(Item item)
+        public async Task<Item> Update(Item item)
         {
             _context.ChangeTracker.Clear();
             _context.Items.Update(item);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return item;
         }
 
-        public void Delete(Item item) 
+        public async Task Delete(Item item) 
         {
             _context.Items.Remove(item);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public bool IsExisted(int id)
+        public async Task<bool> IsExisted(int id)
         {
-            var itemInDb = _context.Items.Find(id);
+            var itemInDb = await _context.Items.FindAsync(id);
             return itemInDb != null;
         }
 
-        public bool HadNameAndDriveIdAndFolderId(string name, int driveId, int? folderId)
+        public async Task<bool> HadNameAndDriveIdAndFolderId(string name, int driveId, int? folderId)
         {
-            var itemInDb = _context.Items.SingleOrDefault(i => i.Name == name && i.DriveId == driveId && i.FolderId == folderId);
+            var itemInDb = await _context.Items.SingleOrDefaultAsync(i => i.Name == name && i.DriveId == driveId && i.FolderId == folderId);
             return itemInDb != null;
         }
 

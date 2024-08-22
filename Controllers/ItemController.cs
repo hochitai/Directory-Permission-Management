@@ -9,6 +9,7 @@ using DirectoryPermissionManagement.Helpers;
 using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DirectoryPermissionManagement.Filters;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -24,56 +25,60 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpGet("{id}")]
-        public JsonResult GetById(int id)
+        [CustomAuthorize]
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var result = _itemService.GetById(id);
+            var result = await _itemService.GetById(id);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Item was not existed!"));
+                return BadRequest("Item was not existed!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
             
         }
 
         [HttpPost]
-        public JsonResult CreateItem(Item item)
+        [CustomAuthorize]
+        public async Task<IActionResult> CreateItem([FromBody] Item item)
         {
-            var result = _itemService.Insert(item);
+            var result = await _itemService.Insert(item);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Item name was existed, please change name!"));
+                return BadRequest("Item name was existed, please change name!");
             }
 
-            return new JsonResult(Created("", result));
+            return Created("", result);
 
         }
 
         [HttpPut("{id}")]
-        public JsonResult UpdateItem(int id, Item item)
+        [CustomAuthorize]
+        public async Task<IActionResult> UpdateItem([FromRoute] int id, [FromBody] Item item)
         {
-            var result = _itemService.Update(id, item);
+            var result = await _itemService.Update(id, item);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Update item fail!"));
+                return BadRequest("Update item fail!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
 
         }
 
         [HttpDelete("{id}")]
-        public JsonResult DeleteItem(int id)
+        [CustomAuthorize]
+        public async Task<IActionResult> DeleteItem([FromRoute] int id)
         {
-            var result = _itemService.Delete(id);
+            var result = await _itemService.Delete(id);
             if (!result)
             {
-                return new JsonResult(BadRequest("Delete item fail!"));
+                return BadRequest("Delete item fail!");
             }
-            return new JsonResult(NoContent());
+            return NoContent();
 
         }
     }

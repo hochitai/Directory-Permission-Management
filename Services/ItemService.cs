@@ -14,42 +14,42 @@ namespace DirectoryPermissionManagement.Services
             _itemRepository = itemRepository;
         }
 
-        public Item? GetById(int id)
+        public async Task<Item?> GetById(int id)
         {
-            var result = _itemRepository.GetById(id);
+            var result = await _itemRepository.GetById(id);
             return result;
         }
 
-        public Item? Insert(Item item)
+        public async Task<Item?> Insert(Item item)
         {
-            if (_itemRepository.HadNameAndDriveIdAndFolderId(item.Name, item.DriveId, (int?)item.FolderId))
+            if (await _itemRepository.HadNameAndDriveIdAndFolderId(item.Name, item.DriveId, (int?)item.FolderId))
             {
                 return null;
             }
-            var result = _itemRepository.Insert(item);
+            var result = await _itemRepository.Insert(item);
             return result;
         }
 
-        public Item? Update(int id, Item item)
+        public async Task<Item?> Update(int id, Item item)
         {
-            if (!_itemRepository.IsExisted(id))
+            if (! await _itemRepository.IsExisted(id))
             {
                 return null;
             }
             item.Id = id;
-            var result = _itemRepository.Update(item);
+            var result = await _itemRepository.Update(item);
             return result;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            var result = _itemRepository.GetById(id);
+            var result = await _itemRepository.GetById(id);
             if (result == null)
             {
                 return false;
             }
 
-            _itemRepository.Delete(result);
+            await _itemRepository.Delete(result);
             return true;
         }
     }
