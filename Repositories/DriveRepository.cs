@@ -1,4 +1,6 @@
 ﻿using DirectoryPermissionManagement.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -11,46 +13,61 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public Drive? GetById(int id)
+        public async Task<List<Folder>?> GetFoldersById(int id)
         {
-            return _context.Drives.SingleOrDefault(d => d.Id == id);
+            return await _context.Folders.Where(d => d.DriveId == id && d.ParrentFolderId == 0).ToListAsync();
         }
 
-        public List<Drive>? GetByUserId(int userId)
+        public async Task<List<Item>?> GetFilesById(int id)
         {
-            return _context.Drives.Where(d => d.UserId == userId).ToList();
+            return await _context.Items.Where(i => i.DriveId == id && i.FolderId == 0).ToListAsync();
         }
 
-        public Drive Insert(Drive drive)
+        public async Task<List<Drive>?> GetByUserId(int userId)
         {
-            _context.Drives.Add(drive);
-            _context.SaveChanges();
+            return await _context.Drives.Where(d => d.UserId == userId).ToListAsync();
+        }
+        public async Task<Drive?> GetById(int id, int userId)
+        {
+            return await _context.Drives.SingleOrDefaultAsync(d => d.Id == id && d.UserId == userId);
+        }
+
+        public async Task<Drive> Insert(Drive drive)
+        {
+            await _context.Drives.AddAsync(drive);
+            await _context.SaveChangesAsync();
             return drive;
         }
 
-        public Drive Update(Drive drive)
+        public async Task<Drive> Update(Drive drive)
         {
             _context.ChangeTracker.Clear();
             _context.Drives.Update(drive);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return drive;
         }
 
-        public void Delete(Drive drive) 
+        public async Task Delete(Drive drive) 
         {
             _context.Drives.Remove(drive);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public bool HadNameAndUserId(string name, int userId)
+        public async Task<bool> HadNameAndUserId(string name, int userId)
         {
-            var driveInDb = _context.Drives.SingleOrDefault(d => d.Name == name && d.UserId == userId);
+            var driveInDb = await _context.Drives.SingleOrDefaultAsync(d => d.Name == name && d.UserId == userId);
             return driveInDb != null;
         }
 
-        public bool IsExisted(int id)
+        public async Task<bool> IsExisted(int id)
         {
-            var driveInDb = _context.Drives.Find(id);
+            var driveInDb = await _context.Drives.FindAsync(id);
+            return driveInDb != null;
+        }
+
+        public async Task<bool> IsOwner(int id, int userId)
+        {
+            var driveInDb = await _context.Drives.SingleOrDefaultAsync(d => d.Id == id && d.UserId == userId);
             return driveInDb != null;
         }
 

@@ -25,86 +25,101 @@ namespace DirectoryPermissionManagement.Controllers
             _driveService = driveService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/folder")]
         [CustomAuthorize]
-        public JsonResult GetById(int id)
+        public async Task<IActionResult> GetFoldersById([FromRoute] int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _driveService.GetById(id);
+            var result = await _driveService.GetFoldersById(id, userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Drive was not existed!"));
+                return BadRequest("Drive was not existed!");
             }
 
-            return new JsonResult(Ok(result));
-            
+            return Ok(result);   
         }
 
-        [HttpGet("user")]
+        [HttpGet("{id}/file")]
         [CustomAuthorize]
-        public JsonResult GetByUserId()
+        public async Task<IActionResult> GetFilesById([FromRoute]  int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _driveService.GetByUserId(userId);
+            var result = await _driveService.GetFilesById(id, userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Drive was not existed!"));
+                return BadRequest("Drive was not existed!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [CustomAuthorize]
+        public async Task<IActionResult> GetByUserId()
+        {
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            var result = await _driveService.GetByUserId(userId);
+
+            if (result == null)
+            {
+                return BadRequest("Drive was not existed!");
+            }
+
+            return Ok(result);
 
         }
 
         [HttpPost]
         [CustomAuthorize]
-        public JsonResult CreateDrive(Drive drive)
+        public async Task<IActionResult> CreateDrive([FromBody] Drive drive)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _driveService.Insert(drive, userId);
+            var result = await _driveService.Insert(drive, userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Drive was existed, please change name!"));
+                BadRequest("Drive was existed, please change name!");
             }
 
-            return new JsonResult(Created("", result));
+            return Created("", result);
         }
 
         [HttpPut("{id}")]
         [CustomAuthorize]
-        public JsonResult UpdateDrive(int id, Drive drive)
+        public async Task<IActionResult> UpdateDrive([FromRoute] int id, [FromBody] Drive drive)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = _driveService.Update(id, drive, userId);
+            var result = await _driveService.Update(id, drive, userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Update drive fail!"));
+                BadRequest("Update drive fail!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [CustomAuthorize]
-        public JsonResult DeleteDrive(int id)
+        public async Task<IActionResult> DeleteDrive([FromRoute] int id)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            _driveService.Delete(id, userId);
-            return new JsonResult(NoContent());
-
+            await _driveService.Delete(id, userId);
+            return NoContent();
         }
     }
 }
