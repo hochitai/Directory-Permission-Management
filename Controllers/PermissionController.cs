@@ -9,63 +9,68 @@ using DirectoryPermissionManagement.Helpers;
 using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DirectoryPermissionManagement.Filters;
 
 namespace DirectoryPermissionManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShareController : ControllerBase
+    public class PermissionController : ControllerBase
     {
         private readonly PermissionService _permissionService;
 
-        public ShareController(PermissionService permissionService)
+        public PermissionController(PermissionService permissionService)
         {
             _permissionService = permissionService;
         }
 
         [HttpGet("{userId}")]
-        public JsonResult GetByUserId(int userId)
+        [CustomAuthorize]
+        public async Task<IActionResult> GetByUserId(int userId)
         {
-            var result = _permissionService.GetByUserId(userId);
+            var result = await _permissionService.GetByUserId(userId);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("List permission was empty!"));
+                return BadRequest("List permission was empty!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
             
         }
 
         [HttpPost]
-        public JsonResult CreatePermission(Permission permission)
+        [CustomAuthorize]
+        public async Task<IActionResult> CreatePermission([FromBody] Permission permission)
         {
-            var result = _permissionService.Insert(permission);
+            var result = await _permissionService.Insert(permission);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Permission was existed, please change name!"));
+                return BadRequest("Create fail!");
             }
 
-            return new JsonResult(Created("", result));
+            return Created("", result);
 
         }
 
         [HttpPut]
-        public JsonResult UpdatePermission(Permission permission)
+        [CustomAuthorize]
+        public async Task<IActionResult> UpdatePermission(Permission permission)
         {
-            var result = _permissionService.Update(permission);
+            var result = await _permissionService.Update(permission);
 
             if (result == null)
             {
-                return new JsonResult(BadRequest("Update permission fail!"));
+                return BadRequest("Update permission fail!");
             }
 
-            return new JsonResult(Ok(result));
+            return Ok(result);
 
         }
 
         [HttpDelete]
+        [CustomAuthorize]
         public JsonResult DeletePermission(Permission permission)
         {
             var result = _permissionService.Delete(permission);

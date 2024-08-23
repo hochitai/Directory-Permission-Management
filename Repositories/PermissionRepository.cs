@@ -1,4 +1,5 @@
 ﻿using DirectoryPermissionManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -11,35 +12,35 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public List<Permission>? GetByUserId(int userId)
+        public async Task<List<Permission>?> GetByUserId(int userId)
         {
-            return _context.Permissions.Where(p => p.UserId == userId).ToList();
+            return await _context.Permissions.Where(p => p.UserId == userId).ToListAsync();
         }
 
-        public Permission Insert(Permission permission)
+        public async Task<Permission> Insert(Permission permission)
         {
-            _context.Permissions.Add(permission);
-            _context.SaveChanges();
+            await _context.Permissions.AddAsync(permission);
+            await _context.SaveChangesAsync();
             return permission;
         }
 
-        public Permission Update(Permission permission)
+        public async Task<Permission> Update(Permission permission)
         {
             _context.ChangeTracker.Clear();
             _context.Permissions.Update(permission);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return permission;
         }
 
-        public void Delete(Permission permission) 
+        public async Task Delete(Permission permission) 
         {
             _context.Permissions.Remove(permission);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public bool IsExisted(Permission permission)
+        public async Task<bool> IsExisted(Permission permission)
         {
-            var permissionInDb = _context.Permissions.SingleOrDefault(p => p.UserId == permission.UserId && p.ItemId == permission.ItemId 
+            var permissionInDb = await _context.Permissions.SingleOrDefaultAsync(p => p.UserId == permission.UserId && p.ItemId == permission.ItemId 
             && p.FolderId == permission.FolderId);
             return permissionInDb != null;
         }

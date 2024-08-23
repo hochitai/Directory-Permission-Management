@@ -14,35 +14,35 @@ namespace DirectoryPermissionManagement.Services
             _permissionRepository = permissionRepository;
         }
 
-        public List<Permission>? GetByUserId(int userId)
+        public async Task<List<Permission>?> GetByUserId(int userId)
         {
-            var result = _permissionRepository.GetByUserId(userId);
+            var result = await _permissionRepository.GetByUserId(userId);
             return result;
         }
 
-        public Permission? Insert(Permission permission)
+        public async Task<Permission?> Insert(Permission permission)
         {
-            if (_permissionRepository.IsExisted(permission))
+            if (await _permissionRepository.IsExisted(permission))
             {
                 return null;
             }
-            var result = _permissionRepository.Insert(permission);
+            var result = await _permissionRepository.Insert(permission);
             return result;
         }
 
-        public Permission? Update(Permission permission)
+        public async Task<Permission?> Update(Permission permission)
         {
-            if (!_permissionRepository.IsExisted(permission))
+            if (! await _permissionRepository.IsExisted(permission))
             {
                 return null;
             }
-            var result = _permissionRepository.Update(permission);
+            var result = await _permissionRepository.Update(permission);
             return result;
         }
 
-        public bool Delete(Permission permission)
+        public async Task<bool> Delete(Permission permission)
         {
-            _permissionRepository.Delete(permission);
+            await _permissionRepository.Delete(permission);
             return true;
         }
     }

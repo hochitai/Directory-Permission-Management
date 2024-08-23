@@ -31,10 +31,6 @@ namespace DirectoryPermissionManagement
             builder.Services.AddScoped<DriveService>();
             builder.Services.AddScoped<DriveRepository>();
 
-            // Register Role Service
-            builder.Services.AddScoped<RoleService>();
-            builder.Services.AddScoped<RoleRepository>();
-
             // Register Folder Service
             builder.Services.AddScoped<FolderService>();
             builder.Services.AddScoped<FolderRepository>();
