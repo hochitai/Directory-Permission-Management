@@ -5,7 +5,6 @@ namespace DirectoryPermissionManagement.Models
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Folder> Folders { get; set; }

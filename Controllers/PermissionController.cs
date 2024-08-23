@@ -71,9 +71,9 @@ namespace DirectoryPermissionManagement.Controllers
 
         [HttpDelete]
         [CustomAuthorize]
-        public JsonResult DeletePermission(Permission permission)
+        public async Task<IActionResult> DeletePermission(Permission permission)
         {
-            var result = _permissionService.Delete(permission);
+            var result = await _permissionService.Delete(permission);
             if (!result)
             {
                 return new JsonResult(BadRequest("Delete permission fail!"));
