@@ -5,7 +5,7 @@ namespace DirectoryPermissionManagement.Helpers
 {
     public class StringHelper
     {
-        public byte[] CreateSalt()
+        public static byte[] CreateSalt()
         {
             byte[] salt = new byte[128 / 8];
             using (var rngCsp = RandomNumberGenerator.Create())
@@ -15,7 +15,7 @@ namespace DirectoryPermissionManagement.Helpers
             return salt;
         }
 
-        public string HashPassword(string password, byte[] salt)
+        public static string HashPassword(string password, byte[] salt)
         {
             // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(

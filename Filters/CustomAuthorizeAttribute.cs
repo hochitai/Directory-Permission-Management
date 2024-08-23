@@ -19,8 +19,7 @@ namespace DirectoryPermissionManagement.Filters
 
             // Add information of user for controller
             var identity = user.Identity as ClaimsIdentity;
-            var tokenHelper = new TokenHelper();
-            var userId = tokenHelper.GetUserIdFromToken(identity);
+            var userId = TokenHelper.GetUserIdFromToken(identity);
 
             context.HttpContext.Items["userId"] = userId;
         }

@@ -14,7 +14,7 @@ namespace DirectoryPermissionManagement.Helpers
     {
 
         // To generate token
-        public string GenerateToken(UserResponse userResponse, JWTConfig config)
+        public static string GenerateToken(UserResponse userResponse, JWTConfig config)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -33,7 +33,7 @@ namespace DirectoryPermissionManagement.Helpers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public int GetUserIdFromToken(ClaimsIdentity identity)
+        public static int GetUserIdFromToken(ClaimsIdentity identity)
         {
             if (identity == null)
             {

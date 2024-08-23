@@ -25,13 +25,12 @@ namespace DirectoryPermissionManagement.Services
                 return null;
             }
 
-            StringHelper stringHelper = new StringHelper();
-            byte[] salt = stringHelper.CreateSalt();
+            byte[] salt = StringHelper.CreateSalt();
 
             User user = new User()
             {
                 Username = userRequest.Username,
-                Password = stringHelper.HashPassword(userRequest.Password, salt),
+                Password = StringHelper.HashPassword(userRequest.Password, salt),
                 Name = userRequest.Name,
                 IsActived = true,
                 Salt = Convert.ToBase64String(salt),
@@ -55,8 +54,7 @@ namespace DirectoryPermissionManagement.Services
                 return null;
             }
 
-            StringHelper stringHelper = new StringHelper();
-            string hashedPassword = stringHelper.HashPassword(userRequest.Password, Convert.FromBase64String(userInDb.Salt));
+            string hashedPassword = StringHelper.HashPassword(userRequest.Password, Convert.FromBase64String(userInDb.Salt));
 
             if (hashedPassword != userInDb.Password)
             {
@@ -69,8 +67,7 @@ namespace DirectoryPermissionManagement.Services
                 Name = userInDb.Name,
             };
 
-            TokenHelper tokenHelper = new TokenHelper();
-            var token = tokenHelper.GenerateToken(result, _jwtConfig);
+            var token = TokenHelper.GenerateToken(result, _jwtConfig);
 
             result.Token = token;
 
