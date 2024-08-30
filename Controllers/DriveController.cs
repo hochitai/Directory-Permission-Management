@@ -11,6 +11,7 @@ using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using DirectoryPermissionManagement.Filters;
+using DirectoryPermissionManagement.Commons;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -19,12 +20,14 @@ namespace DirectoryPermissionManagement.Controllers
     public class DriveController : ControllerBase
     {
         private readonly DriveService _driveService;
+        private readonly PermissionService _permissionService;
 
-        public DriveController(DriveService driveService)
+        public DriveController(DriveService driveService, PermissionService permissionService)
         {
             _driveService = driveService;
+            _permissionService = permissionService;
         }
-
+/*
         [HttpGet("{id}/folder")]
         [CustomAuthorize]
         public async Task<IActionResult> GetFoldersById([FromRoute] int id)
@@ -58,7 +61,7 @@ namespace DirectoryPermissionManagement.Controllers
 
             return Ok(result);
         }
-
+*/
         [HttpGet]
         [CustomAuthorize]
         public async Task<IActionResult> GetByUserId()
@@ -84,12 +87,12 @@ namespace DirectoryPermissionManagement.Controllers
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = await _driveService.Insert(drive, userId);
-
-            if (result == null)
+            if (! await _driveService.HasNameAndUserId(drive.Name, userId))
             {
                 BadRequest("Drive was existed, please change name!");
             }
+
+            var result = await _driveService.Insert(drive, userId);
 
             return Created("", result);
         }
@@ -100,6 +103,12 @@ namespace DirectoryPermissionManagement.Controllers
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, drive.Id, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, drive.Id, null, null, (int)RoleEnum.Contributor)) 
+            {
+                return Forbid();
+            }
 
             var result = await _driveService.Update(id, drive, userId);
 
@@ -118,7 +127,13 @@ namespace DirectoryPermissionManagement.Controllers
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            await _driveService.Delete(id, userId);
+            if (!await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
+            await _driveService.Delete(id);
             return NoContent();
         }
     }

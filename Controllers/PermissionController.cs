@@ -10,6 +10,8 @@ using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using DirectoryPermissionManagement.Filters;
+using DirectoryPermissionManagement.Commons;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -23,7 +25,7 @@ namespace DirectoryPermissionManagement.Controllers
         {
             _permissionService = permissionService;
         }
-
+        /*
         [HttpGet("{userId}")]
         [CustomAuthorize]
         public async Task<IActionResult> GetByUserId(int userId)
@@ -80,6 +82,52 @@ namespace DirectoryPermissionManagement.Controllers
             }
             return new JsonResult(NoContent());
 
+        } */
+
+        [HttpPost("drive/{driveId}/role/{roleId}")]
+        [CustomAuthorize]
+        public async Task<IActionResult> ShareDrive([FromRoute] int driveId, [FromRoute] int roleId)
+        {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (! await _permissionService.HasPermission(userId, driveId, null, null, (int) RoleEnum.Admin))
+            {
+                return Forbid();
+            }
+
+            await _permissionService.GrantDrivePermission(userId, driveId, roleId);
+            return Ok();
         }
+
+        [HttpPost("Folder/{folderId}/role/{roleId}")]
+        [CustomAuthorize]
+        public async Task<IActionResult> ShareFolder([FromRoute] int folderId, [FromRoute] int roleId)
+        {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Admin))
+            {
+                return Forbid();
+            }
+
+            await _permissionService.GrantFolderPermission(userId, folderId, roleId);
+            return Ok();
+        }
+
+        [HttpPost("File/{fileId}/role/{roleId}")]
+        [CustomAuthorize]
+        public async Task<IActionResult> ShareFile([FromRoute] int fileId, [FromRoute] int roleId)
+        {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, null, fileId, (int)RoleEnum.Admin))
+            {
+                return Forbid();
+            }
+
+            await _permissionService.GrantFilePermission(userId, fileId, roleId);
+            return Ok();
+        }
+
     }
 }

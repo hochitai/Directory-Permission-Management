@@ -1,4 +1,5 @@
-﻿using DirectoryPermissionManagement.Configs;
+﻿using DirectoryPermissionManagement.Commons;
+using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Models;
 using DirectoryPermissionManagement.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +9,14 @@ namespace DirectoryPermissionManagement.Services
     public class DriveService
     {
         private readonly DriveRepository _driveRepository;
+        private readonly PermissionRepository _permissionRepository;
 
-        public DriveService(DriveRepository driveRepository)
+        public DriveService(DriveRepository driveRepository, PermissionRepository permissionRepository)
         {
             _driveRepository = driveRepository;
+            _permissionRepository = permissionRepository;
         }
-
+        /*
         public async Task<List<Folder>?> GetFoldersById(int id, int userId)
         {
             if (! await _driveRepository.IsOwner(id, userId))
@@ -33,48 +36,48 @@ namespace DirectoryPermissionManagement.Services
             var result = await _driveRepository.GetFilesById(id);
             return result;
         }
-
+        */
         public async Task<List<Drive>?> GetByUserId(int userId)
         {
             var result = await _driveRepository.GetByUserId(userId);
             return result;
         }
 
+        public async Task<bool> HasNameAndUserId(string driveName, int userId)
+        {
+            return await _driveRepository.HasNameAndUserId(driveName, userId);
+        }
+
+
         public async Task<Drive?> Insert(Drive drive, int userId)
         {
-            if (await _driveRepository.HadNameAndUserId(drive.Name, userId))
-            {
-                return null;
-            }
             drive.UserId = userId;
 
             var result = await _driveRepository.Insert(drive);
+
             return result;
         }
 
         public async Task<Drive?> Update(int id, Drive drive, int userId)
         {
-            if ( ! await _driveRepository.IsExisted(id))
-            {
-                return null;
-            }
-            
             drive.Id = id;
+            // Add owner
             drive.UserId = userId;
 
             var result = await _driveRepository.Update(drive);
             return result;
         }
 
-        public async Task Delete(int id, int userId)
+        public async Task<bool> Delete(int id)
         {
-            var result = await _driveRepository.GetById(id, userId);
+            var result = await _driveRepository.GetById(id);
             if (result == null)
             {
-                return;
+                return false;
             }
 
             await _driveRepository.Delete(result);
+            return true;
         }
     }
 }

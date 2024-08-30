@@ -39,6 +39,23 @@ namespace DirectoryPermissionManagement.Controllers
             
         }
 
+        [HttpGet("{id}/file")]
+        [CustomAuthorize]
+        public async Task<IActionResult> GetFilesById([FromRoute] int id)
+        {
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            var result = await _itemService.GetFilesById(id, userId);
+
+            if (result == null)
+            {
+                return BadRequest("Item was not existed!");
+            }
+
+            return Ok(result);
+        }
+
         [HttpPost]
         [CustomAuthorize]
         public async Task<IActionResult> CreateItem([FromBody] Item item)

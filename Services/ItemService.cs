@@ -20,6 +20,12 @@ namespace DirectoryPermissionManagement.Services
             return result;
         }
 
+        public async Task<List<Item>?> GetFilesById(int id, int userId)
+        {
+            var result = await _itemRepository.GetFilesById(id, userId);
+            return result;
+        }
+
         public async Task<Item?> Insert(Item item)
         {
             if (await _itemRepository.HadNameAndDriveIdAndFolderId(item.Name, item.DriveId, (int?)item.FolderId))

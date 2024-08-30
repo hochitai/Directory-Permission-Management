@@ -12,7 +12,7 @@ namespace DirectoryPermissionManagement.Repositories
         {
             _context = context;
         }
-
+        
         public async Task<List<Folder>?> GetFoldersById(int id)
         {
             return await _context.Folders.Where(d => d.DriveId == id && d.ParrentFolderId == 0).ToListAsync();
@@ -27,9 +27,10 @@ namespace DirectoryPermissionManagement.Repositories
         {
             return await _context.Drives.Where(d => d.UserId == userId).ToListAsync();
         }
-        public async Task<Drive?> GetById(int id, int userId)
+
+        public async Task<Drive?> GetById(int id)
         {
-            return await _context.Drives.SingleOrDefaultAsync(d => d.Id == id && d.UserId == userId);
+            return await _context.Drives.FirstOrDefaultAsync(d => d.Id == id);
         }
 
         public async Task<Drive> Insert(Drive drive)
@@ -53,12 +54,12 @@ namespace DirectoryPermissionManagement.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> HadNameAndUserId(string name, int userId)
+        public async Task<bool> HasNameAndUserId(string name, int userId)
         {
-            var driveInDb = await _context.Drives.SingleOrDefaultAsync(d => d.Name == name && d.UserId == userId);
+            var driveInDb = await _context.Drives.FirstOrDefaultAsync(d => d.Name == name && d.UserId == userId);
             return driveInDb != null;
         }
-
+        /*
         public async Task<bool> IsExisted(int id)
         {
             var driveInDb = await _context.Drives.FindAsync(id);
@@ -67,9 +68,9 @@ namespace DirectoryPermissionManagement.Repositories
 
         public async Task<bool> IsOwner(int id, int userId)
         {
-            var driveInDb = await _context.Drives.SingleOrDefaultAsync(d => d.Id == id && d.UserId == userId);
+            var driveInDb = await _context.Drives.FirstOrDefaultAsync(d => d.Id == id && d.UserId == userId);
             return driveInDb != null;
         }
-
+        */
     }
 }

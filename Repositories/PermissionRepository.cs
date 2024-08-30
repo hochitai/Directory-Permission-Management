@@ -1,5 +1,6 @@
 ﻿using DirectoryPermissionManagement.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -12,19 +13,7 @@ namespace DirectoryPermissionManagement.Repositories
             _context = context;
         }
 
-        public async Task<List<Permission>?> GetByUserId(int userId)
-        {
-            return await _context.Permissions.Where(p => p.UserId == userId).ToListAsync();
-        }
-
-        public async Task<Permission> Insert(Permission permission)
-        {
-            await _context.Permissions.AddAsync(permission);
-            await _context.SaveChangesAsync();
-            return permission;
-        }
-
-        public async Task<Permission> Update(Permission permission)
+        /* public async Task<Permission> Update(Permission permission)
         {
             _context.ChangeTracker.Clear();
             _context.Permissions.Update(permission);
@@ -36,13 +25,28 @@ namespace DirectoryPermissionManagement.Repositories
         {
             _context.Permissions.Remove(permission);
             await _context.SaveChangesAsync();
+        }*/
+
+        public async Task<int> GetPermissionRole(int userId, int? driveId, int? folderId, int? fileId)
+        {
+            return await (from p in _context.Permissions
+                    join r in _context.Roles on p.RoleId equals r.Id
+                    where p.UserId == userId && p.DriveId == driveId && p.FolderId == folderId && p.ItemId == fileId
+                    select r.Id).FirstAsync();
         }
 
-        public async Task<bool> IsExisted(Permission permission)
+        public async Task GrantPermission(int userId, int? driveId, int? folderId, int? fileId, int roleId)
         {
-            var permissionInDb = await _context.Permissions.SingleOrDefaultAsync(p => p.UserId == permission.UserId && p.ItemId == permission.ItemId 
-            && p.FolderId == permission.FolderId);
-            return permissionInDb != null;
+            var permission = new Permission
+            {
+                UserId = userId,
+                RoleId = roleId,
+                DriveId = driveId,
+                FolderId = folderId,
+                ItemId = fileId
+            };
+            await _context.Permissions.AddAsync(permission);
+            await _context.SaveChangesAsync();
         }
 
     }

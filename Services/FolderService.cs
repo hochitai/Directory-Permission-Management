@@ -22,18 +22,8 @@ namespace DirectoryPermissionManagement.Services
             return result;
         }
 
-        public async Task<List<Item>?> GetFilesById(int id, int userId)
-        {
-            var result = await _folderRepository.GetFilesById(id, userId);
-            return result;
-        }
-
         public async Task<Folder?> Insert(Folder folder)
         {
-            if (await _folderRepository.HadNameAndDriveIdAndParrentFolderId(folder.Name, folder.DriveId, (int?)folder.ParrentFolderId))
-            {
-                return null;
-            }
             var result = await _folderRepository.Insert(folder);
 
             return result;

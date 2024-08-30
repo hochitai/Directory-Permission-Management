@@ -6,8 +6,10 @@ namespace DirectoryPermissionManagement.Models
     {
         [Key]
         public int UserId { get; set; }
-        public int FolderId { get; set; }
-        public int ItemId { get; set; }
-        public string Role {  get; set; }
+        public int? DriveId { get; set; }
+
+        public int? FolderId { get; set; }
+        public int? ItemId { get; set; }
+        public int RoleId {  get; set; }
     }
 }

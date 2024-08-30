@@ -16,6 +16,14 @@ namespace DirectoryPermissionManagement.Repositories
         {
             return await _context.Items.FindAsync(id);
         }
+        public async Task<List<Item>?> GetFilesById(int id, int userId)
+        {
+            var results = from i in _context.Items
+                          join d in _context.Drives on i.DriveId equals d.Id
+                          where d.UserId == userId && i.FolderId == id
+                          select i;
+            return await results.ToListAsync();
+        }
 
         public async Task<Item> Insert(Item item)
         {
