@@ -26,11 +26,20 @@ namespace DirectoryPermissionManagement.Controllers
             _itemService = itemService;
             _permissionService = permissionService;
         }
-        /*
+        
         [HttpGet("{id}")]
         [CustomAuthorize]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor) ||
+                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Reader))
+            {
+                return Forbid();
+            }
+
             var result = await _itemService.GetById(id);
 
             if (result == null)
@@ -38,31 +47,7 @@ namespace DirectoryPermissionManagement.Controllers
                 return BadRequest("Item was not existed!");
             }
 
-            return Ok(result);
-            
-        }*/
-
-        [HttpGet("{id}/file")]
-        [CustomAuthorize]
-        public async Task<IActionResult> GetFilesByFolderId([FromRoute] int folderId)
-        {
-            // Get user id
-            var userId = (int)HttpContext.Items["userId"];
-
-            if (!await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Admin) ||
-                !await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Contributor))
-            {
-                return Forbid();
-            }
-
-            var result = await _itemService.GetFilesByFolderId(folderId, userId);
-
-            if (result == null)
-            {
-                return BadRequest("Item was not existed!");
-            }
-
-            return Ok(result);
+            return Ok(result);     
         }
 
         [HttpPost]

@@ -20,12 +20,14 @@ namespace DirectoryPermissionManagement.Controllers
     public class FolderController : ControllerBase
     {
         private readonly FolderService _folderService;
+        private readonly ItemService _itemService;
         private readonly PermissionService _permissionService;
 
-        public FolderController(FolderService folderService, PermissionService permissionService)
+        public FolderController(FolderService folderService, PermissionService permissionService, ItemService itemService)
         {
             _folderService = folderService;
             _permissionService = permissionService;
+            _itemService = itemService;
         }
 
         [HttpGet("{folderId}/subfolder")]
@@ -49,6 +51,29 @@ namespace DirectoryPermissionManagement.Controllers
             }
 
             return Ok(result);  
+        }
+
+        [HttpGet("{folderId}/file")]
+        [CustomAuthorize]
+        public async Task<IActionResult> GetFilesByFolderId([FromRoute] int folderId)
+        {
+            // Get user id
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
+            var result = await _itemService.GetFilesByFolderId(folderId, userId);
+
+            if (result == null)
+            {
+                return BadRequest("Item was not existed!");
+            }
+
+            return Ok(result);
         }
 
         [HttpPost]

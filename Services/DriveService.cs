@@ -9,34 +9,31 @@ namespace DirectoryPermissionManagement.Services
     public class DriveService
     {
         private readonly DriveRepository _driveRepository;
+        private readonly FolderRepository _folderRepository;
+        private readonly ItemRepository _itemRepository;
         private readonly PermissionRepository _permissionRepository;
 
-        public DriveService(DriveRepository driveRepository, PermissionRepository permissionRepository)
+        public DriveService(DriveRepository driveRepository, FolderRepository folderRepository, ItemRepository itemRepository, PermissionRepository permissionRepository)
         {
             _driveRepository = driveRepository;
+            _folderRepository = folderRepository;
+            _itemRepository = itemRepository;
             _permissionRepository = permissionRepository;
         }
-        /*
-        public async Task<List<Folder>?> GetFoldersById(int id, int userId)
+        
+        public async Task<List<Folder>?> GetFoldersById(int id)
         {
-            if (! await _driveRepository.IsOwner(id, userId))
-            {
-                return null;
-            }
-            var result = await _driveRepository.GetFoldersById(id);
-            return result;
+            var folders = await _folderRepository.GetFoldersByDriveId(id);
+            
+            return folders;
         }
-
-        public async Task<List<Item>?> GetFilesById(int id, int userId)
+         
+        public async Task<List<Item>?> GetFilesById(int id)
         {
-            if (! await _driveRepository.IsOwner(id, userId))
-            {
-                return null;
-            }
-            var result = await _driveRepository.GetFilesById(id);
-            return result;
+            var files = await _itemRepository.GetFilesByDriveId(id);
+            return files;
         }
-        */
+        
         public async Task<List<Drive>?> GetByUserId(int userId)
         {
             var result = await _driveRepository.GetByUserId(userId);

@@ -27,15 +27,21 @@ namespace DirectoryPermissionManagement.Controllers
             _driveService = driveService;
             _permissionService = permissionService;
         }
-/*
+
         [HttpGet("{id}/folder")]
         [CustomAuthorize]
         public async Task<IActionResult> GetFoldersById([FromRoute] int id)
         {
-            // Get user id
+            /// Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = await _driveService.GetFoldersById(id, userId);
+            if (!await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
+            var result = await _driveService.GetFoldersById(id);
 
             if (result == null)
             {
@@ -52,7 +58,13 @@ namespace DirectoryPermissionManagement.Controllers
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = await _driveService.GetFilesById(id, userId);
+            if (!await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
+            var result = await _driveService.GetFilesById(id);
 
             if (result == null)
             {
@@ -61,7 +73,7 @@ namespace DirectoryPermissionManagement.Controllers
 
             return Ok(result);
         }
-*/
+
         [HttpGet]
         [CustomAuthorize]
         public async Task<IActionResult> GetByUserId()
