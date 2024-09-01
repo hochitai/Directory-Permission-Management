@@ -16,9 +16,9 @@ namespace DirectoryPermissionManagement.Services
             _permissionRepository = permissionRepository;
         }
 
-        public async Task<List<Folder>?> GetSubFoldersById(int id, int userId)
+        public async Task<List<Folder>?> GetSubFoldersById(int folderId, int userId)
         {
-            var result = await _folderRepository.GetSubFoldersById(id, userId);
+            var result = await _folderRepository.GetSubFoldersById(folderId, userId);
             return result;
         }
 

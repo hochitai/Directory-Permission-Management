@@ -25,14 +25,14 @@ namespace DirectoryPermissionManagement.Controllers
             _folderService = folderService;
         }
 
-        [HttpGet("{id}/subfolder")]
+        [HttpGet("{folderId}/subfolder")]
         [CustomAuthorize]
-        public async Task<IActionResult> GetSubFoldersById([FromRoute] int id)
+        public async Task<IActionResult> GetSubFoldersById([FromRoute] int folderId)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = await _folderService.GetSubFoldersById(id, userId);
+            var result = await _folderService.GetSubFoldersById(folderId, userId);
 
             if (result == null)
             {

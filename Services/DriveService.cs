@@ -54,6 +54,12 @@ namespace DirectoryPermissionManagement.Services
             drive.UserId = userId;
 
             var result = await _driveRepository.Insert(drive);
+            if (result == null)
+            {
+                return null;
+            }
+
+            await _permissionRepository.GrantPermission(userId, result.Id, null, null, (int) RoleEnum.Admin);
 
             return result;
         }
