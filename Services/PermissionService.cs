@@ -74,8 +74,8 @@ namespace DirectoryPermissionManagement.Services
         public async Task GrantDrivePermission(int userId, int driveId, int roleId)
         {
             await _permissionRepository.GrantPermission(userId, driveId, null, null, roleId);
-            var folders = await _driveRepository.GetFoldersById(driveId);
-            var files = await _driveRepository.GetFilesById(driveId );
+            var folders = await _folderRepository.GetFoldersByDriveId(driveId);
+            var files = await _itemRepository.GetFilesByDriveId(driveId );
 
             foreach  (var file in files)
             {
@@ -91,7 +91,7 @@ namespace DirectoryPermissionManagement.Services
         public async Task GrantSubFolderAndFile(int folderId, int userId, int roleId)
         {
             var subFolders = await _folderRepository.GetSubFoldersById(folderId, userId);
-            var subFiles = await _itemRepository.GetFilesById(folderId, userId);
+            var subFiles = await _itemRepository.GetFilesByFolderId(folderId, userId);
 
             foreach (var file in subFiles)
             {

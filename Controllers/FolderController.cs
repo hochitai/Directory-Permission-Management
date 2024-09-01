@@ -11,6 +11,7 @@ using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using DirectoryPermissionManagement.Filters;
+using DirectoryPermissionManagement.Commons;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -19,10 +20,12 @@ namespace DirectoryPermissionManagement.Controllers
     public class FolderController : ControllerBase
     {
         private readonly FolderService _folderService;
+        private readonly PermissionService _permissionService;
 
-        public FolderController(FolderService folderService)
+        public FolderController(FolderService folderService, PermissionService permissionService)
         {
             _folderService = folderService;
+            _permissionService = permissionService;
         }
 
         [HttpGet("{folderId}/subfolder")]
@@ -31,6 +34,12 @@ namespace DirectoryPermissionManagement.Controllers
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
 
             var result = await _folderService.GetSubFoldersById(folderId, userId);
 
@@ -46,6 +55,16 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> CreateFolder([FromBody] Folder folder)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, folder.DriveId, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, folder.DriveId, null, null, (int)RoleEnum.Contributor) ||
+                !await _permissionService.HasPermission(userId, null, folder.ParrentFolderId, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, folder.ParrentFolderId, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
             var result = await _folderService.Insert(folder);
 
             if (result == null)
@@ -61,6 +80,14 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> UpdateFolder([FromRoute] int id, [FromBody] Folder folder)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, id, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, id, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
             var result = await _folderService.Update(id, folder);
 
             if (result == null)
@@ -76,6 +103,14 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> DeleteFolder([FromRoute] int id)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, id, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, id, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
             var result = await _folderService.Delete(id);
             if (!result)
             {

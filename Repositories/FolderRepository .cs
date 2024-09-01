@@ -17,6 +17,11 @@ namespace DirectoryPermissionManagement.Repositories
             return await _context.Folders.FindAsync(id);
         }
 
+        public async Task<List<Folder>?> GetFoldersByDriveId(int driveId)
+        {
+            return await _context.Folders.Where(d => d.DriveId == driveId && d.ParrentFolderId == 0).ToListAsync();
+        }
+
         public async Task<List<Folder>?> GetSubFoldersById(int folderId, int userId)
         {
             var results = from f in _context.Folders

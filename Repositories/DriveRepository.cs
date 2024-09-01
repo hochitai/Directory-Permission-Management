@@ -12,16 +12,6 @@ namespace DirectoryPermissionManagement.Repositories
         {
             _context = context;
         }
-        
-        public async Task<List<Folder>?> GetFoldersById(int id)
-        {
-            return await _context.Folders.Where(d => d.DriveId == id && d.ParrentFolderId == 0).ToListAsync();
-        }
-        
-        public async Task<List<Item>?> GetFilesById(int id)
-        {
-            return await _context.Items.Where(i => i.DriveId == id && i.FolderId == 0).ToListAsync();
-        }
 
         public async Task<List<Drive>?> GetByUserId(int userId)
         {

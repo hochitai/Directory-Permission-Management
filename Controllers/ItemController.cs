@@ -10,6 +10,7 @@ using DirectoryPermissionManagement.Configs;
 using DirectoryPermissionManagement.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using DirectoryPermissionManagement.Filters;
+using DirectoryPermissionManagement.Commons;
 
 namespace DirectoryPermissionManagement.Controllers
 {
@@ -18,12 +19,14 @@ namespace DirectoryPermissionManagement.Controllers
     public class ItemController : ControllerBase
     {
         private readonly ItemService _itemService;
+        private readonly PermissionService _permissionService;
 
-        public ItemController(ItemService itemService)
+        public ItemController(ItemService itemService, PermissionService permissionService)
         {
             _itemService = itemService;
+            _permissionService = permissionService;
         }
-
+        /*
         [HttpGet("{id}")]
         [CustomAuthorize]
         public async Task<IActionResult> GetById([FromRoute] int id)
@@ -37,16 +40,22 @@ namespace DirectoryPermissionManagement.Controllers
 
             return Ok(result);
             
-        }
+        }*/
 
         [HttpGet("{id}/file")]
         [CustomAuthorize]
-        public async Task<IActionResult> GetFilesById([FromRoute] int id)
+        public async Task<IActionResult> GetFilesByFolderId([FromRoute] int folderId)
         {
             // Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            var result = await _itemService.GetFilesById(id, userId);
+            if (!await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, folderId, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
+            var result = await _itemService.GetFilesByFolderId(folderId, userId);
 
             if (result == null)
             {
@@ -60,6 +69,16 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> CreateItem([FromBody] Item item)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Contributor) ||
+                !await _permissionService.HasPermission(userId, null, item.FolderId, null, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, item.FolderId, null, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
             var result = await _itemService.Insert(item);
 
             if (result == null)
@@ -75,6 +94,13 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> UpdateItem([FromRoute] int id, [FromBody] Item item)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
             var result = await _itemService.Update(id, item);
 
             if (result == null)
@@ -90,6 +116,14 @@ namespace DirectoryPermissionManagement.Controllers
         [CustomAuthorize]
         public async Task<IActionResult> DeleteItem([FromRoute] int id)
         {
+            var userId = (int)HttpContext.Items["userId"];
+
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
+                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor))
+            {
+                return Forbid();
+            }
+
             var result = await _itemService.Delete(id);
             if (!result)
             {

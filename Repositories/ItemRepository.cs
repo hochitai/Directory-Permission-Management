@@ -16,11 +16,17 @@ namespace DirectoryPermissionManagement.Repositories
         {
             return await _context.Items.FindAsync(id);
         }
-        public async Task<List<Item>?> GetFilesById(int id, int userId)
+
+        public async Task<List<Item>?> GetFilesByDriveId(int driveId)
+        {
+            return await _context.Items.Where(i => i.DriveId == driveId && i.FolderId == 0).ToListAsync();
+        }
+
+        public async Task<List<Item>?> GetFilesByFolderId(int folderId, int userId)
         {
             var results = from i in _context.Items
                           join d in _context.Drives on i.DriveId equals d.Id
-                          where d.UserId == userId && i.FolderId == id
+                          where d.UserId == userId && i.FolderId == folderId
                           select i;
             return await results.ToListAsync();
         }

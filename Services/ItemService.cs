@@ -20,9 +20,9 @@ namespace DirectoryPermissionManagement.Services
             return result;
         }
 
-        public async Task<List<Item>?> GetFilesById(int id, int userId)
+        public async Task<List<Item>?> GetFilesByFolderId(int folderId, int userId)
         {
-            var result = await _itemRepository.GetFilesById(id, userId);
+            var result = await _itemRepository.GetFilesByFolderId(folderId, userId);
             return result;
         }
 
