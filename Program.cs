@@ -10,6 +10,7 @@ using DirectoryPermissionManagement.Repositories;
 using DirectoryPermissionManagement.Services;
 using Microsoft.OpenApi.Models;
 using Microsoft.Win32;
+using System;
 
 namespace DirectoryPermissionManagement
 {
@@ -21,7 +22,10 @@ namespace DirectoryPermissionManagement
 
             // Add services to the container.
 
-            builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseInMemoryDatabase("DirectoryPermissionDb"));
+            // builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseInMemoryDatabase("DirectoryPermissionDb"));
+
+            // Use SQL Server
+            builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer("Server=LAPTOP-R0O4HMIF;Database=DirectoryManagement;Trusted_Connection=True;TrustServerCertificate=True;"));
 
             // Register User Service
             builder.Services.AddScoped<UserService>();
