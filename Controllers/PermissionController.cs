@@ -84,9 +84,9 @@ namespace DirectoryPermissionManagement.Controllers
 
         } */
 
-        [HttpPost("drive/{driveId}/role/{roleId}")]
+        [HttpPost("drive/{driveId}/role/{roleId}/user/{id}")]
         [CustomAuthorize]
-        public async Task<IActionResult> ShareDrive([FromRoute] int driveId, [FromRoute] int roleId)
+        public async Task<IActionResult> ShareDrive([FromRoute] int driveId, [FromRoute] int roleId, [FromRoute] int id)
         {
             var userId = (int)HttpContext.Items["userId"];
 
@@ -95,13 +95,13 @@ namespace DirectoryPermissionManagement.Controllers
                 return Forbid();
             }
 
-            await _permissionService.GrantDrivePermission(userId, driveId, roleId);
+            await _permissionService.GrantDrivePermission(id, driveId, roleId);
             return Ok();
         }
 
-        [HttpPost("Folder/{folderId}/role/{roleId}")]
+        [HttpPost("Folder/{folderId}/role/{roleId}/user/{id}")]
         [CustomAuthorize]
-        public async Task<IActionResult> ShareFolder([FromRoute] int folderId, [FromRoute] int roleId)
+        public async Task<IActionResult> ShareFolder([FromRoute] int folderId, [FromRoute] int roleId, [FromRoute] int id)
         {
             var userId = (int)HttpContext.Items["userId"];
 
@@ -110,13 +110,13 @@ namespace DirectoryPermissionManagement.Controllers
                 return Forbid();
             }
 
-            await _permissionService.GrantFolderPermission(userId, folderId, roleId);
+            await _permissionService.GrantFolderPermission(id, folderId, roleId);
             return Ok();
         }
 
-        [HttpPost("File/{fileId}/role/{roleId}")]
+        [HttpPost("File/{fileId}/role/{roleId}/user/{id}")]
         [CustomAuthorize]
-        public async Task<IActionResult> ShareFile([FromRoute] int fileId, [FromRoute] int roleId)
+        public async Task<IActionResult> ShareFile([FromRoute] int fileId, [FromRoute] int roleId, [FromRoute] int id)
         {
             var userId = (int)HttpContext.Items["userId"];
 
@@ -125,7 +125,7 @@ namespace DirectoryPermissionManagement.Controllers
                 return Forbid();
             }
 
-            await _permissionService.GrantFilePermission(userId, fileId, roleId);
+            await _permissionService.GrantFilePermission(id, fileId, roleId);
             return Ok();
         }
 

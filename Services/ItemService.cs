@@ -8,10 +8,12 @@ namespace DirectoryPermissionManagement.Services
     public class ItemService
     {
         private readonly ItemRepository _itemRepository;
+        private readonly PermissionRepository _permissionRepository;
 
-        public ItemService(ItemRepository itemRepository)
+        public ItemService(ItemRepository itemRepository, PermissionRepository permissionRepository)
         {
             _itemRepository = itemRepository;
+            _permissionRepository = permissionRepository;
         }
 
         public async Task<Item?> GetById(int id)
@@ -20,9 +22,9 @@ namespace DirectoryPermissionManagement.Services
             return result;
         }
 
-        public async Task<List<Item>?> GetFilesByFolderId(int folderId, int userId)
+        public async Task<List<Item>?> GetFilesByFolderId(int folderId)
         {
-            var result = await _itemRepository.GetFilesByFolderId(folderId, userId);
+            var result = await _itemRepository.GetFilesByFolderId(folderId);
             return result;
         }
 
@@ -32,7 +34,24 @@ namespace DirectoryPermissionManagement.Services
             {
                 return null;
             }
+
             var result = await _itemRepository.Insert(item);
+            var users = new List<Permission> { };
+
+            if (item.FolderId == null || item.FolderId == 0)
+            {
+                users = await _permissionRepository.GetUserIdHavePermissionByDriveId(result.DriveId);
+            }
+            else
+            {
+                users = await _permissionRepository.GetUserIdHavePermissionByFolderId(result.FolderId);
+            }
+
+            foreach (var user in users)
+            {
+                await _permissionRepository.GrantPermission(user.UserId, null, result.Id, null, user.RoleId);
+            }
+
             return result;
         }
 
@@ -49,6 +68,12 @@ namespace DirectoryPermissionManagement.Services
 
         public async Task<bool> Delete(int id)
         {
+            var userSubs = await _permissionRepository.GetUserIdHavePermissionByItemId(id);
+            foreach (var user in userSubs)
+            {
+                await _permissionRepository.DeletePermission(user.UserId, null, null, id, user.RoleId);
+            }
+
             var result = await _itemRepository.GetById(id);
             if (result == null)
             {

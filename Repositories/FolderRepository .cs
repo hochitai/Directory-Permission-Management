@@ -22,10 +22,9 @@ namespace DirectoryPermissionManagement.Repositories
             return await _context.Folders.Where(d => d.DriveId == driveId && d.ParrentFolderId == 0).ToListAsync();
         }
 
-        public async Task<List<Folder>?> GetSubFoldersById(int folderId, int userId)
+        public async Task<List<Folder>?> GetSubFoldersById(int folderId)
         {
             var results = from f in _context.Folders
-                          join d in _context.Drives on f.DriveId equals d.Id
                           where f.ParrentFolderId == folderId
                           select f;
             return await results.ToListAsync();
@@ -60,7 +59,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public async Task<bool> HadNameAndDriveIdAndParrentFolderId(string name, int driveId, int? parrentFolderId)
         {
-            var folderInDb = await _context.Folders.SingleOrDefaultAsync(f => f.Name == name && f.DriveId == driveId && f.ParrentFolderId == parrentFolderId);
+            var folderInDb = await _context.Folders.FirstOrDefaultAsync(f => f.Name == name && f.DriveId == driveId && f.ParrentFolderId == parrentFolderId);
             return folderInDb != null;
         }
 

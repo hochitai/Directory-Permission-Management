@@ -22,11 +22,10 @@ namespace DirectoryPermissionManagement.Repositories
             return await _context.Items.Where(i => i.DriveId == driveId && i.FolderId == 0).ToListAsync();
         }
 
-        public async Task<List<Item>?> GetFilesByFolderId(int folderId, int userId)
+        public async Task<List<Item>?> GetFilesByFolderId(int folderId)
         {
             var results = from i in _context.Items
-                          join d in _context.Drives on i.DriveId equals d.Id
-                          where d.UserId == userId && i.FolderId == folderId
+                          where i.FolderId == folderId
                           select i;
             return await results.ToListAsync();
         }
@@ -60,7 +59,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public async Task<bool> HadNameAndDriveIdAndFolderId(string name, int driveId, int? folderId)
         {
-            var itemInDb = await _context.Items.SingleOrDefaultAsync(i => i.Name == name && i.DriveId == driveId && i.FolderId == folderId);
+            var itemInDb = await _context.Items.FirstOrDefaultAsync(i => i.Name == name && i.DriveId == driveId && i.FolderId == folderId);
             return itemInDb != null;
         }
 

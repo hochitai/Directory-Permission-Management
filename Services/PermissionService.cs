@@ -90,8 +90,8 @@ namespace DirectoryPermissionManagement.Services
 
         public async Task GrantSubFolderAndFile(int folderId, int userId, int roleId)
         {
-            var subFolders = await _folderRepository.GetSubFoldersById(folderId, userId);
-            var subFiles = await _itemRepository.GetFilesByFolderId(folderId, userId);
+            var subFolders = await _folderRepository.GetSubFoldersById(folderId);
+            var subFiles = await _itemRepository.GetFilesByFolderId(folderId);
 
             foreach (var file in subFiles)
             {

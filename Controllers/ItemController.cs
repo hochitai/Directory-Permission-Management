@@ -33,8 +33,8 @@ namespace DirectoryPermissionManagement.Controllers
         {
             var userId = (int)HttpContext.Items["userId"];
 
-            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
-                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor) ||
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) &&
+                !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor) &&
                 !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Reader))
             {
                 return Forbid();
@@ -56,9 +56,9 @@ namespace DirectoryPermissionManagement.Controllers
         {
             var userId = (int)HttpContext.Items["userId"];
 
-            if (!await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Admin) ||
-                !await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Contributor) ||
-                !await _permissionService.HasPermission(userId, null, item.FolderId, null, (int)RoleEnum.Admin) ||
+            if (!await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Admin) &&
+                !await _permissionService.HasPermission(userId, item.DriveId, null, null, (int)RoleEnum.Contributor) &&
+                !await _permissionService.HasPermission(userId, null, item.FolderId, null, (int)RoleEnum.Admin) &&
                 !await _permissionService.HasPermission(userId, null, item.FolderId, null, (int)RoleEnum.Contributor))
             {
                 return Forbid();
@@ -81,7 +81,7 @@ namespace DirectoryPermissionManagement.Controllers
         {
             var userId = (int)HttpContext.Items["userId"];
 
-            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) &&
                 !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor))
             {
                 return Forbid();
@@ -103,7 +103,7 @@ namespace DirectoryPermissionManagement.Controllers
         {
             var userId = (int)HttpContext.Items["userId"];
 
-            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) ||
+            if (!await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Admin) &&
                 !await _permissionService.HasPermission(userId, null, null, id, (int)RoleEnum.Contributor))
             {
                 return Forbid();

@@ -73,6 +73,36 @@ namespace DirectoryPermissionManagement.Services
 
         public async Task<bool> Delete(int id)
         {
+            var folders = await _folderRepository.GetFoldersByDriveId(id);
+            var files = await _itemRepository.GetFilesByDriveId(id);
+            var users = await _permissionRepository.GetUserIdHavePermissionByDriveId(id);
+
+            foreach (var file in files)
+            {
+                var userSubs = await _permissionRepository.GetUserIdHavePermissionByItemId(file.Id);
+                foreach (var user in userSubs) 
+                {
+                    await _permissionRepository.DeletePermission(user.UserId, null, null, file.Id, user.RoleId);
+                }
+                await _itemRepository.Delete(file);
+            }
+
+            foreach (var folder in folders)
+            {
+                await DeleteSubFolderAndFile(folder.Id);
+                var userSubs = await _permissionRepository.GetUserIdHavePermissionByFolderId(folder.Id);
+                foreach (var user in userSubs)
+                {
+                    await _permissionRepository.DeletePermission(user.UserId, null, folder.Id, null, user.RoleId);
+                }
+                await _folderRepository.Delete(folder);
+            }
+
+            foreach (var user in users)
+            {
+                await _permissionRepository.DeletePermission(user.UserId, id, null, null, user.RoleId);
+            }
+
             var result = await _driveRepository.GetById(id);
             if (result == null)
             {
@@ -81,6 +111,33 @@ namespace DirectoryPermissionManagement.Services
 
             await _driveRepository.Delete(result);
             return true;
+        }
+
+        public async Task DeleteSubFolderAndFile(int folderId)
+        {
+            var subFolders = await _folderRepository.GetSubFoldersById(folderId);
+            var subFiles = await _itemRepository.GetFilesByFolderId(folderId);
+
+            foreach (var file in subFiles)
+            {
+                var userSubs = await _permissionRepository.GetUserIdHavePermissionByItemId(file.Id);
+                foreach (var user in userSubs)
+                {
+                    await _permissionRepository.DeletePermission(user.UserId, null, null, file.Id, user.RoleId);
+                }
+                await _itemRepository.Delete(file);
+            }
+
+            foreach (var folder in subFolders)
+            {
+                await DeleteSubFolderAndFile(folder.Id);
+                var userSubs = await _permissionRepository.GetUserIdHavePermissionByFolderId(folder.Id);
+                foreach (var user in userSubs)
+                {
+                    await _permissionRepository.DeletePermission(user.UserId, null, folder.Id, null, user.RoleId);
+                }
+                await _folderRepository.Delete(folder);
+            }
         }
     }
 }

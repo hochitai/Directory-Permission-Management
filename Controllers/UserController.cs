@@ -37,9 +37,9 @@ namespace DirectoryPermissionManagement.Controllers
         }
 
         [HttpPost("login")]
-        public JsonResult Login([FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Login([FromBody] UserRequest userRequest)
         {
-            var result = _userService.Login(userRequest);
+            var result = await _userService.Login(userRequest);
 
             if (result == null)
             {
