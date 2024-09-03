@@ -1,6 +1,7 @@
 ﻿using DirectoryPermissionManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace DirectoryPermissionManagement.Repositories
 {
@@ -56,30 +57,30 @@ namespace DirectoryPermissionManagement.Repositories
 
         public async Task GrantPermission(int userId, int? driveId, int? folderId, int? fileId, int roleId)
         {
-            var permission = new Permission
-            {
-                UserId = userId,
-                RoleId = roleId,
-                DriveId = driveId,
-                FolderId = folderId,
-                ItemId = fileId
-            };
-            await _context.Permissions.AddAsync(permission);
-            await _context.SaveChangesAsync();
+            string sql = "INSERT INTO Permissions (UserId, DriveId,FolderId, ItemID, RoleID) VALUES (@p0, @p1, @p2, @p3, @p4)";
+            await _context.Database.ExecuteSqlRawAsync(sql, userId, driveId, folderId, fileId, roleId);
         }
 
         public async Task DeletePermission(int userId, int? driveId, int? folderId, int? fileId, int roleId)
         {
-            var permission = new Permission
+            string sql = "DELETE FROM Permissions WHERE UserId = @p0 AND RoleId = @p1";
+
+            if (driveId != null)
             {
-                UserId = userId,
-                RoleId = roleId,
-                DriveId = driveId,
-                FolderId = folderId,
-                ItemId = fileId
-            };
-            _context.Permissions.Remove(permission);
-            await _context.SaveChangesAsync();
+                sql += " AND DriveId = @p2 AND (FolderId = @p3 OR @p3 IS NULL) AND (ItemId = @p4 OR @p4 IS NULL)";
+            }
+
+            if (folderId != null) 
+            {
+                sql += " AND (DriveId = @p2 OR @p2 IS NULL) AND FolderId = @p3 AND (ItemId = @p4 OR @p4 IS NULL) ";
+            }
+
+            if (fileId != null) 
+            {
+                sql += " AND (DriveId = @p2 OR @p2 IS NULL) AND (FolderId = @p3 OR @p3 IS NULL) AND ItemId = @p4";
+            }
+
+            await _context.Database.ExecuteSqlRawAsync(sql, userId, roleId, driveId, folderId, fileId);
         }
 
     }

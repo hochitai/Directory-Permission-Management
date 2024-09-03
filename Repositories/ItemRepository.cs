@@ -19,7 +19,7 @@ namespace DirectoryPermissionManagement.Repositories
 
         public async Task<List<Item>?> GetFilesByDriveId(int driveId)
         {
-            return await _context.Items.Where(i => i.DriveId == driveId && i.FolderId == 0).ToListAsync();
+            return await _context.Items.Where(i => i.DriveId == driveId && i.FolderId == null).ToListAsync();
         }
 
         public async Task<List<Item>?> GetFilesByFolderId(int folderId)

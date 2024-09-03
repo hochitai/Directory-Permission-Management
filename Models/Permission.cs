@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace DirectoryPermissionManagement.Models
 {
+    [Keyless]
     public class Permission
     {
-        [Key]
         public int UserId { get; set; }
         public int? DriveId { get; set; }
 

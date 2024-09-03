@@ -35,7 +35,7 @@ namespace DirectoryPermissionManagement.Controllers
             /// Get user id
             var userId = (int)HttpContext.Items["userId"];
 
-            if (!await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Admin) ||
+            if (!await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Admin) &&
                 !await _permissionService.HasPermission(userId, id, null, null, (int)RoleEnum.Contributor))
             {
                 return Forbid();

@@ -49,7 +49,7 @@ namespace DirectoryPermissionManagement.Services
 
             foreach (var user in users)
             {
-                await _permissionRepository.GrantPermission(user.UserId, null, result.Id, null, user.RoleId);
+                await _permissionRepository.GrantPermission(user.UserId, null, null, result.Id, user.RoleId);
             }
 
             return result;

@@ -67,12 +67,18 @@ namespace DirectoryPermissionManagement.Services
 
             await DeleteSubFolderAndFile(id);
 
+            var userSubs = await _permissionRepository.GetUserIdHavePermissionByFolderId(id);
+            foreach (var user in userSubs)
+            {
+                await _permissionRepository.DeletePermission(user.UserId, null, id, null, user.RoleId);
+            }
+
             var result = await _folderRepository.GetById(id);
             if (result == null)
             {
                 return false;
             }
-           
+
             await _folderRepository.Delete(result);
             return true;
         }
