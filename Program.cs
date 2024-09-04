@@ -25,7 +25,7 @@ namespace DirectoryPermissionManagement
             // builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseInMemoryDatabase("DirectoryPermissionDb"));
 
             // Use SQL Server
-            builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer("Server=LAPTOP-R0O4HMIF;Database=DirectoryManagement;Trusted_Connection=True;TrustServerCertificate=True;"));
+            builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
             // Register User Service
             builder.Services.AddScoped<UserService>();
